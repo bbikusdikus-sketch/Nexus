@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus — Избранное</title>
+  <link rel="icon" type="image/svg+xml" href="image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237e22ce'/%3E%3Ctext x='50' y='70' font-size='60' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial, sans-serif'%3EN%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header__content">
+        <div class="logo"><a href="index.html" class="logo__link"><span class="logo__text">Nexus</span></a></div>
+        <nav class="nav" id="nav">
+          <ul class="nav__list">
+            <li class="nav__item"><a href="index.html" class="nav__link">Главная</a></li>
+            <li class="nav__item"><a href="gallery.html" class="nav__link">Каталог</a></li>
+          </ul>
+        </nav>
+        <div class="header__search">
+          <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Поиск..." autocomplete="off" />
+            <button type="button" id="searchBtn" class="search-btn">⌕</button>
+            <div id="searchResults" class="search-results"></div>
+          </div>
+        </div>
+        <div class="header__actions">
+          <div class="city-selector" id="citySelector"><span class="city-name">Москва</span></div>
+          <div class="icon-wrapper">
+            <div class="favorites-icon" onclick="window.location.href='favorites.html'"></div>
+            <span class="favorites-badge"></span>
+          </div>
+          <div class="icon-wrapper">
+            <div class="cart-icon" onclick="window.location.href='order-form.html'"></div>
+            <span class="cart-badge"></span>
+          </div>
+          <div class="icon-wrapper">
+            <div class="account-icon" onclick="window.location.href='account.html'"></div>
+          </div>
+        </div>
+        <button class="burger" id="burger"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="favorites-section">
+      <div class="container">
+        <h1 class="section__title">Избранное</h1>
+        <div id="favoritesContent" class="products__grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__content">
+        <div class="footer__section">
+          <h3 class="footer__title">Nexus</h3>
+          <p class="footer__text">Минималистичный интернет-магазин премиальной электроники.</p>
+        </div>
+        <div class="footer__section">
+          <h3 class="footer__title">Контакты</h3>
+          <p class="footer__text">info@nexus.store</p>
+          <p class="footer__text">+7 (800) 000-00-00</p>
+        </div>
+        <div class="footer__section">
+          <h3 class="footer__title">Навигация</h3>
+          <ul class="footer__nav">
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="gallery.html">Каталог</a></li>
+            <li><a href="order-form.html">Корзина</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2025 Nexus. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/navigation.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/favorites.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/city.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      cart.init();
+      const grid = document.getElementById('favoritesContent');
+      const items = favorites.getItems();
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="favorites-empty"><h2>Избранное пусто</h2><a href="gallery.html" class="btn btn--primary">В каталог</a></div>';
+        return;
+      }
+      items.forEach(fav => {
+        const p = getProductById(fav.id);
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-card__image">
+            <img src="${fav.image}" alt="${fav.name}" loading="lazy"
+              onerror="this.src='https://via.placeholder.com/300x300?text=${fav.name.replace(/'/g, '')}'">
+          </div>
+          <div class="product-card__content">
+            <h3 class="product-card__title">${fav.name}</h3>
+            <div class="product-card__price">${fav.price.toLocaleString('ru-RU')} ₽</div>
+            <div class="product-card__actions">
+              <a href="product.html?id=${fav.id}" class="btn btn--secondary">Подробнее</a>
+              <button class="btn btn--primary" onclick="cart.addItem(${fav.id}, 1)">В корзину</button>
+              <button class="btn btn--outline" onclick="favorites.removeItem(${fav.id}); location.reload()">Удалить</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
